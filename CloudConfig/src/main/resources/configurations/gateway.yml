@@ -1,0 +1,18 @@
+eureka:
+  client:
+    register-with-eureka: false
+server:
+  port: 8222
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: surveyservice
+          uri: http://localhost:8081
+          predicates:
+            - Path=/survey/**
