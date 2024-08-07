@@ -1,5 +1,7 @@
 package com.ust.Survery_Service.Controller;
 
+import com.ust.Survery_Service.Client.Assessment;
+import com.ust.Survery_Service.Client.FullResponse;
 import com.ust.Survery_Service.Model.Survey;
 import com.ust.Survery_Service.Service.SurveyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +27,12 @@ public class SurveyController {
     }
 
     @GetMapping("/{surveyid}")
-    public ResponseEntity<Survey> getSurveyById(@PathVariable Long surveyid) {
+    public ResponseEntity<List<Assessment>> getSurveyById(@PathVariable Long surveyid) {
         return ResponseEntity.ok(surveyService.getSurveyById(surveyid));
+    }
+
+    @PutMapping("/assign/{surveyid}")
+    public FullResponse assignSurvey(@PathVariable Long survey, @RequestParam  String setid){
+        return surveyService.assignSurvey1(survey, setid);
     }
 }
