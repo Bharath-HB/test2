@@ -20,5 +20,7 @@ public class FullResponse {
     public String setname;
     public String createdby;
     public SurveyStatus status;
-    List<Assessment> assessmentList;
+    public List<Question> questionList;
+
+
 }

@@ -5,6 +5,7 @@ import com.ust.Survery_Service.Client.FullResponse;
 import com.ust.Survery_Service.Model.Survey;
 import com.ust.Survery_Service.Model.SurveyStatus;
 import com.ust.Survery_Service.Repository.SurveyRepository;
+import com.ust.Survery_Service.dto.dtoToEntity;
 import com.ust.Survery_Service.feign.AssessmentClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,9 @@ public class SurveyService {
     private AssessmentClient assessmentClient;
 
     public Survey addSurvey(Survey survey) {
-      return repo.save(survey);
+        survey.setStatus(SurveyStatus.SURVEY_REQUESTED);
+        survey.setAssesmentId(null);  // set assessmentId to null initially
+        return repo.save(survey);
     }
 
     public List<Survey> getSurveyDetails() {
@@ -38,7 +41,7 @@ public class SurveyService {
                 .toList()).orElse(null);
     }
 
-    public FullResponse assignSurvey1(Long surveyId,String assessmentId){
+    public Survey assignSurvey1(Long surveyId, String assessmentId){
         Survey survey = repo.findById(surveyId).orElse(null);
         Assessment assessment = assessmentClient.findAssessmentById(assessmentId);
         FullResponse res = new FullResponse();
@@ -50,17 +53,20 @@ public class SurveyService {
         res.setAssessmentId(assessmentId);
         res.setDomain(assessment.getDomain());
         res.setStatus(SurveyStatus.SURVEY_COMPLETED);
-        //res.setAssessmentList(assessment.get);
-        return res;
+        res.setQuestionList(assessment.getQuestions());
+        res.setCreatedby(assessment.getCreatedBy());
+        Survey convertedSurvey = dtoToEntity.convertToEntity(res);
+        return repo.save(convertedSurvey);
     }
 
 
-    public ResponseEntity<Survey> assignSurvey(Long survey, String setid) {
-        Optional<Survey> surveyOptional= repo.findById(survey);
-        if (surveyOptional.isPresent()) {
-           // surveyOptional.get().setAssesmentId(setid);
-            return ResponseEntity.ok(repo.save(surveyOptional.get()));
-        }
-        return ResponseEntity.noContent().build();
-    }
+//    public ResponseEntity<Survey> assignSurvey(Long survey, String setid) {
+//        Optional<Survey> surveyOptional= repo.findById(survey);
+//        if (surveyOptional.isPresent()) {
+//           // surveyOptional.get().setAssesmentId(setid);
+//            return ResponseEntity.ok(repo.save(surveyOptional.get()));
+//        }
+//        return ResponseEntity.noContent().build();
+//    }
+
 }

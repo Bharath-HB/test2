@@ -1,7 +1,9 @@
 package com.ust.Survery_Service.Model;
 
+import com.ust.Survery_Service.Client.Question;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +13,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Table(name = "surveys")
 public class Survey {
     @Id
@@ -19,12 +22,13 @@ public class Survey {
     public String requester;
     public String cname;
     public String cemail;
-    public List<String> assessments;
+    public List<Question> questionList;
+    @Enumerated(value = EnumType.STRING)
+    public SurveyStatus status;
+    public String assesmentId;
 
-    //   public String domain;
-//    public String setname;
-//    public String assesmentId;
-//    public String createdby;
-//    @Enumerated(value = EnumType.STRING)
-//    public SurveyStatus status;
+    public String domain;
+    public String setname;
+
+    public String createdBy;
 }
