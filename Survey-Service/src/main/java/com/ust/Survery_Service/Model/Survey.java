@@ -22,7 +22,7 @@ public class Survey {
     public String requester;
     public String cname;
     public String cemail;
-    public List<Question> questionList;
+
     @Enumerated(value = EnumType.STRING)
     public SurveyStatus status;
     public String assesmentId;
@@ -31,4 +31,6 @@ public class Survey {
     public String setname;
 
     public String createdBy;
+//    @Transient
+//    private List<Question> questions;
 }

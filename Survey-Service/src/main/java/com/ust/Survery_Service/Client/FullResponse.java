@@ -1,6 +1,9 @@
 package com.ust.Survery_Service.Client;
 
 import com.ust.Survery_Service.Model.SurveyStatus;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,7 +23,8 @@ public class FullResponse {
     public String setname;
     public String createdby;
     public SurveyStatus status;
-    public List<Question> questionList;
+
+//    public List<Question> questionList;
 
 
 }

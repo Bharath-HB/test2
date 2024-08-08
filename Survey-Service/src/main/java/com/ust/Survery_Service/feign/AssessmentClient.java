@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
-@FeignClient(name="AssessmentService",url="http://localhost:8082/assessments")
+@FeignClient(name="assessmentservice",url="http://localhost:8083/assessment")
 public interface AssessmentClient {
     @GetMapping("/getAllAssessment")
     public List<Assessment> getAllAssessment();

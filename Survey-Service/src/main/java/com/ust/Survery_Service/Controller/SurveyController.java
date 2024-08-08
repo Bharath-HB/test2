@@ -32,7 +32,7 @@ public class SurveyController {
     }
 
     @PutMapping("/assign/{surveyid}")
-    public FullResponse assignSurvey(@PathVariable Long survey, @RequestParam  String setid){
-        return surveyService.assignSurvey1(survey, setid);
+    public Survey assignSurvey(@PathVariable Long surveyid, @RequestParam  String setid){
+        return surveyService.assignSurvey1(surveyid, setid);
     }
 }

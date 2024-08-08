@@ -1,20 +1,18 @@
-package com.ust.Survery_Service.Client;
+package com.ust.Assessment_Service.Model;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
 @Table(name = "assessment")
 public class Assessment {
+    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String setid;
     private String setname;
     private String createdBy;

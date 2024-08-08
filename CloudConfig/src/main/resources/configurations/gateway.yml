@@ -16,3 +16,7 @@ spring:
           uri: http://localhost:8081
           predicates:
             - Path=/survey/**
+        - id: assessmentservice
+          uri: http://localhost:8082
+          predicates:
+            - Path=/assessment/**

@@ -53,7 +53,7 @@ public class SurveyService {
         res.setAssessmentId(assessmentId);
         res.setDomain(assessment.getDomain());
         res.setStatus(SurveyStatus.SURVEY_COMPLETED);
-        res.setQuestionList(assessment.getQuestions());
+        //res.setQuestionList(assessment.getQuestions());
         res.setCreatedby(assessment.getCreatedBy());
         Survey convertedSurvey = dtoToEntity.convertToEntity(res);
         return repo.save(convertedSurvey);
