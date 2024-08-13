@@ -21,18 +21,12 @@ public class Survey {
     public Long surveyid;
     public String requester;
     public String cname;
-//    public String cemail;
     public List<String> cemail;
     @Enumerated(value = EnumType.STRING)
     public SurveyStatus status;
-    public String assesmentId;
-
+    public Long assesmentId;
     public String domain;
     public String setname;
-
     public String createdBy;
-//    @Transient
-//    private List<Question> questions;
-
 
 }

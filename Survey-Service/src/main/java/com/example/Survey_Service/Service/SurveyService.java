@@ -4,10 +4,9 @@ import com.example.Survey_Service.Model.Survey;
 import com.example.Survey_Service.Model.SurveyStatus;
 import com.example.Survey_Service.Repository.SurveyRepository;
 import com.example.Survey_Service.dto.dtoToEntity;
-import com.example.Survey_Service.feign.AssessmentClient;
 import com.example.Survey_Service.Client.Assessment;
 import com.example.Survey_Service.Client.FullResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.Survey_Service.feign.QuestionClient;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,11 +16,10 @@ public class SurveyService {
 
     private final SurveyRepository repo;
 
-    private final AssessmentClient assessmentClient;
-
-    public SurveyService(SurveyRepository repo, AssessmentClient assessmentClient) {
+    private final QuestionClient questionClient;
+    public SurveyService(SurveyRepository repo,QuestionClient questionClient) {
         this.repo = repo;
-        this.assessmentClient = assessmentClient;
+        this.questionClient = questionClient;
     }
 
     public Survey addSurvey(Survey survey) {
@@ -56,10 +54,10 @@ public class SurveyService {
 
     }
 
-    public Survey assignSurvey1(Long surveyId, String assessmentId){
+    public Survey assignSurvey(Long surveyId, Long assessmentId){
         try{
             Survey survey = repo.findById(surveyId).orElse(null);
-            Assessment assessment = assessmentClient.findAssessmentById(assessmentId);
+            Assessment assessment = questionClient.findAssessmentBySetId(assessmentId);
             FullResponse res = new FullResponse();
             res.setSurveyid(surveyId);
             assert survey != null;
@@ -71,7 +69,7 @@ public class SurveyService {
             res.setSetname(assessment.getSetname());
             res.setStatus(SurveyStatus.SURVEY_COMPLETED);
             //res.setQuestionList(assessment.getQuestions());
-            res.setCreatedby(assessment.getCreatedBy());
+            res.setCreatedby(assessment.getCreatedby());
             Survey convertedSurvey = dtoToEntity.convertToEntity(res);
             return repo.save(convertedSurvey);
         }
@@ -80,15 +78,5 @@ public class SurveyService {
         }
 
     }
-
-
-//    public ResponseEntity<Survey> assignSurvey(Long survey, String setid) {
-//        Optional<Survey> surveyOptional= repo.findById(survey);
-//        if (surveyOptional.isPresent()) {
-//           // surveyOptional.get().setAssesmentId(setid);
-//            return ResponseEntity.ok(repo.save(surveyOptional.get()));
-//        }
-//        return ResponseEntity.noContent().build();
-//    }
 
 }

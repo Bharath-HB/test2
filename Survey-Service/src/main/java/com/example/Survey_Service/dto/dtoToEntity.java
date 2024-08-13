@@ -16,7 +16,6 @@ public class dtoToEntity {
                 .cname(response.getCname())
                 .cemail(response.getCemail())
                 //.questionList(response.getQuestionList())
-
                 .setname(response.getSetname())
                 .createdBy(response.getCreatedby())
                 .status(response.getStatus())

@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: QuestionService
+
+  config:
+    import: optional:configserver:http://localhost:8888
+
+#server:
+#  port: 9098
+#spring:
+#  application:
+#    name: QuestionService
+#  datasource:
+#    url: jdbc:mysql://localhost:3306/ita
+#    username: root
+#    password: pass@word1
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#      show-sql: true

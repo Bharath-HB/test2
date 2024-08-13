@@ -36,7 +36,7 @@ public class SurveyController {
     }
 
     @PutMapping("/assign/{surveyid}")
-    public ResponseEntity<Survey> assignSurvey(@PathVariable Long surveyid, @RequestParam  String setid){
-        return ResponseEntity.ok(surveyService.assignSurvey1(surveyid, setid));
+    public ResponseEntity<Survey> assignSurvey(@PathVariable Long surveyid, @RequestParam  Long setid){
+        return ResponseEntity.ok(surveyService.assignSurvey(surveyid, setid));
     }
 }

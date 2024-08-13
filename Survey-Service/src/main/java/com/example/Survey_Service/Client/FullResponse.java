@@ -14,11 +14,11 @@ import java.util.List;
 @NoArgsConstructor
 public class FullResponse {
     public Long surveyid;
-    public String assessmentId;
+    public Long assessmentId;
     public String requester;
     public String cname;
 //    public String cemail;
-    
+
     public List<String> cemail;
     public String domain;
     public String setname;
