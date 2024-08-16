@@ -4,6 +4,8 @@ import com.example.Survey_Service.Client.FullResponse;
 import com.example.Survey_Service.Model.Survey;
 import org.springframework.stereotype.Component;
 
+
+
 @Component
 public class dtoToEntity {
     public static Survey convertToEntity(FullResponse response){
@@ -15,14 +17,15 @@ public class dtoToEntity {
                 .requester(response.getRequester())
                 .cname(response.getCname())
                 .cemail(response.getCemail())
-                //.questionList(response.getQuestionList())
-                .setname(response.getSetname())
+                //.setname(response.getSetname())
                 .createdBy(response.getCreatedby())
                 .status(response.getStatus())
-                .assesmentId(response.getAssessmentId())
-
+                .setid(response.getSetid())
+//                .questions(response.getQuestions())
+//                .setList(response.getSetList())
                 .domain(response.getDomain())
                 .build();
 
     }
+
 }

@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,5 +15,6 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 public class Question {
     private String qid;
     private String qdetails;
-    private String setid;
+    private Long setid;
+    //private List<Answers> answers;
 }

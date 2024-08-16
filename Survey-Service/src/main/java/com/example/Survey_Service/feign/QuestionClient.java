@@ -1,6 +1,7 @@
 package com.example.Survey_Service.feign;
 
 import com.example.Survey_Service.Client.Assessment;
+import com.example.Survey_Service.Client.Question;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,4 +17,7 @@ public interface QuestionClient {
 
     @GetMapping
     public ResponseEntity<List<Assessment>> getAssessments();
+
+    @GetMapping("/{setid}")
+    public List<Question> getQuestions(@PathVariable Long setid);
 }

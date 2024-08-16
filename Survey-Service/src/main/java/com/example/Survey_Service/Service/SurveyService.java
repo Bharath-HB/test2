@@ -1,5 +1,6 @@
 package com.example.Survey_Service.Service;
 
+import com.example.Survey_Service.Client.Question;
 import com.example.Survey_Service.Model.Survey;
 import com.example.Survey_Service.Model.SurveyStatus;
 import com.example.Survey_Service.Repository.SurveyRepository;
@@ -10,6 +11,7 @@ import com.example.Survey_Service.feign.QuestionClient;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SurveyService {
@@ -25,7 +27,6 @@ public class SurveyService {
     public Survey addSurvey(Survey survey) {
         try{
             survey.setStatus(SurveyStatus.SURVEY_REQUESTED);
-            survey.setAssesmentId(null);  // set assessmentId to null initially
             return repo.save(survey);
         }
         catch (Exception e) {
@@ -44,39 +45,55 @@ public class SurveyService {
 
     }
 
-    public Survey getSurveyById(Long surveyid) {
+    public FullResponse getSurveyById(Long surveyid) {
         try{
-            return repo.findById(surveyid).orElse(null);
+            Optional<Survey> surveyOptional = repo.findById(surveyid);
+            if(surveyOptional.isPresent()){
+                Survey survey = surveyOptional.get();
+                FullResponse response = new FullResponse();
+                Assessment assessment = questionClient.findAssessmentBySetId(surveyOptional.get().getSetid());
+                List<Question> questions = questionClient.getQuestions(surveyOptional.get().getSetid());
+                response.setSurveyid(surveyOptional.get().getSurveyid());
+                response.setRequester(surveyOptional.get().getRequester());
+                response.setCname(surveyOptional.get().getCname());
+                response.setCemail(surveyOptional.get().getCemail());
+                response.setStatus(SurveyStatus.SURVEY_COMPLETED);
+                response.setSetid(surveyOptional.get().getSetid());
+                response.setDomain(surveyOptional.get().getDomain());
+                response.setQuestions(questions);
+                response.setCreatedby(assessment.getCreatedby());
+                return response;
+            }else{
+                throw new RuntimeException("No survey found with given id");
+            }
         }
         catch (Exception e) {
             throw new RuntimeException("Failed to get survey by id",e);
         }
-
     }
 
-    public Survey assignSurvey(Long surveyId, Long assessmentId){
-        try{
-            Survey survey = repo.findById(surveyId).orElse(null);
-            Assessment assessment = questionClient.findAssessmentBySetId(assessmentId);
-            FullResponse res = new FullResponse();
-            res.setSurveyid(surveyId);
-            assert survey != null;
-            res.setCname(survey.getCname());
-            res.setCemail(survey.getCemail());
-            res.setRequester(survey.getRequester());
-            res.setAssessmentId(assessmentId);
-            res.setDomain(assessment.getDomain());
-            res.setSetname(assessment.getSetname());
-            res.setStatus(SurveyStatus.SURVEY_COMPLETED);
-            //res.setQuestionList(assessment.getQuestions());
-            res.setCreatedby(assessment.getCreatedby());
-            Survey convertedSurvey = dtoToEntity.convertToEntity(res);
-            return repo.save(convertedSurvey);
-        }
-        catch (Exception e) {
-            throw new RuntimeException("Failed to assign survey",e);
-        }
-
-    }
+//    public Survey assignSurvey(Long surveyId, Long assessmentId){
+//        try{
+//            Survey survey = repo.findById(surveyId).orElse(null);
+//            Assessment assessment = questionClient.findAssessmentBySetId(assessmentId);
+//            FullResponse res = new FullResponse();
+//            res.setSurveyid(surveyId);
+//            assert survey != null;
+//            res.setCname(survey.getCname());
+//            res.setCemail(survey.getCemail());
+//            res.setRequester(survey.getRequester());
+//            res.setSetid(assessmentId);
+//            res.setDomain(assessment.getDomain());
+//            res.setStatus(SurveyStatus.SURVEY_COMPLETED);
+//            res.setQuestions(assessment.getQuestions());
+//            res.setCreatedby(assessment.getCreatedby());
+//            Survey convertedSurvey = dtoToEntity.convertToEntity(res);
+//            return repo.save(convertedSurvey);
+//        }
+//        catch (Exception e) {
+//            throw new RuntimeException("Failed to assign survey",e);
+//        }
+//
+//    }
 
 }
