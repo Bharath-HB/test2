@@ -19,10 +19,6 @@ public class FullResponse {
     public String domain;
     public String createdby;
     public SurveyStatus status;
-//    private String setName;
-//    private List<Question> questions;
-//    public List<Setinfo> setList;
-
     private List<Question> questions;
 
 

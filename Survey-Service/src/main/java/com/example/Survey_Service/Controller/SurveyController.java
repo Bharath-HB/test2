@@ -34,8 +34,9 @@ public class SurveyController {
         return ResponseEntity.ok(surveyService.getSurveyById(surveyid));
     }
 
-//    @PutMapping("/assign/{surveyid}")
-//    public ResponseEntity<Survey> assignSurvey(@PathVariable Long surveyid, @RequestParam  Long setid){
-//        return ResponseEntity.ok(surveyService.assignSurvey(surveyid, setid));
-//    }
+    @PutMapping("/{surveyid}/addQuestions")
+    public ResponseEntity<FullResponse> addListQuestions(@PathVariable Long surveyid, @RequestBody List<Long> qids) {
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(surveyService.addListQuestions(surveyid, qids));
+    }
+
 }

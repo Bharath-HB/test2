@@ -21,4 +21,7 @@ public class QuestionService {
     }
 
 
+    public Question getQuestionById(Long qid) {
+        return questionRepo.findById(qid).orElse(null);
+    }
 }

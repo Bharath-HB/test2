@@ -1,17 +1,23 @@
 package com.example.Survey_Service.Service;
 
 import com.example.Survey_Service.Client.Question;
+import com.example.Survey_Service.Exception.ExternalServiceException;
+import com.example.Survey_Service.Exception.SurveyNotFoundException;
 import com.example.Survey_Service.Model.Survey;
 import com.example.Survey_Service.Model.SurveyStatus;
 import com.example.Survey_Service.Repository.SurveyRepository;
-import com.example.Survey_Service.dto.dtoToEntity;
 import com.example.Survey_Service.Client.Assessment;
 import com.example.Survey_Service.Client.FullResponse;
 import com.example.Survey_Service.feign.QuestionClient;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class SurveyService {
@@ -19,6 +25,7 @@ public class SurveyService {
     private final SurveyRepository repo;
 
     private final QuestionClient questionClient;
+
     public SurveyService(SurveyRepository repo,QuestionClient questionClient) {
         this.repo = repo;
         this.questionClient = questionClient;
@@ -46,6 +53,44 @@ public class SurveyService {
     }
 
     public FullResponse getSurveyById(Long surveyid) {
+        try {
+            Optional<Survey> surveyOptional = repo.findById(surveyid);
+            if (surveyOptional.isEmpty()) {
+                throw new SurveyNotFoundException("No survey found with id: " + surveyid);
+            }
+
+            Survey survey = surveyOptional.get();
+            FullResponse response = new FullResponse();
+
+            try {
+                Assessment assessment = questionClient.findAssessmentBySetId(survey.getSetid());
+                List<Question> questions = questionClient.getQuestions(survey.getSetid());
+
+                response.setSurveyid(survey.getSurveyid());
+                response.setRequester(survey.getRequester());
+                response.setCname(survey.getCname());
+                response.setCemail(survey.getCemail());
+                response.setStatus(SurveyStatus.SURVEY_COMPLETED);
+                response.setSetid(survey.getSetid());
+                response.setDomain(survey.getDomain());
+                response.setQuestions(questions);
+                response.setCreatedby(assessment.getCreatedby());
+            } catch (Exception e) {
+                throw new ExternalServiceException("Failed to retrieve assessment or questions", e);
+            }
+
+            return response;
+        } catch (SurveyNotFoundException | ExternalServiceException e) {
+            throw e; // Re-throwing known exceptions to be handled by a global exception handler
+        } catch (Exception e) {
+            // Log the exception
+            // Example: logger.error("Unexpected error occurred while getting survey by ID", e);
+            throw new RuntimeException("Failed to get survey", e);
+        }
+    }
+
+
+    public FullResponse addListQuestions(Long surveyid, List<Long> qids) {
         try{
             Optional<Survey> surveyOptional = repo.findById(surveyid);
             if(surveyOptional.isPresent()){
@@ -60,40 +105,24 @@ public class SurveyService {
                 response.setStatus(SurveyStatus.SURVEY_COMPLETED);
                 response.setSetid(surveyOptional.get().getSetid());
                 response.setDomain(surveyOptional.get().getDomain());
-                response.setQuestions(questions);
                 response.setCreatedby(assessment.getCreatedby());
+                List<Question> mergedQuestions = new ArrayList<>(questions);
+                for (Long qid : qids) {
+                    Question newQuestion = questionClient.getQuestionById(qid);
+                    boolean isDuplicate = mergedQuestions.stream()
+                            .anyMatch(existingQuestion -> existingQuestion.getQid().equals(newQuestion.getQid()));
+                    if (!isDuplicate) {
+                        mergedQuestions.add(newQuestion);
+                    }
+                }
+                response.setQuestions(mergedQuestions);
                 return response;
             }else{
                 throw new RuntimeException("No survey found with given id");
             }
         }
         catch (Exception e) {
-            throw new RuntimeException("Failed to get survey by id",e);
+            throw new RuntimeException("Failed to add question ",e);
         }
     }
-
-//    public Survey assignSurvey(Long surveyId, Long assessmentId){
-//        try{
-//            Survey survey = repo.findById(surveyId).orElse(null);
-//            Assessment assessment = questionClient.findAssessmentBySetId(assessmentId);
-//            FullResponse res = new FullResponse();
-//            res.setSurveyid(surveyId);
-//            assert survey != null;
-//            res.setCname(survey.getCname());
-//            res.setCemail(survey.getCemail());
-//            res.setRequester(survey.getRequester());
-//            res.setSetid(assessmentId);
-//            res.setDomain(assessment.getDomain());
-//            res.setStatus(SurveyStatus.SURVEY_COMPLETED);
-//            res.setQuestions(assessment.getQuestions());
-//            res.setCreatedby(assessment.getCreatedby());
-//            Survey convertedSurvey = dtoToEntity.convertToEntity(res);
-//            return repo.save(convertedSurvey);
-//        }
-//        catch (Exception e) {
-//            throw new RuntimeException("Failed to assign survey",e);
-//        }
-//
-//    }
-
 }

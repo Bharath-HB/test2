@@ -71,4 +71,9 @@ public class AssessmentController {
         return (Assessment) assessmentService.findAssessmentBySetId(setid);
     }
 
+    @GetMapping("/getQuestionById/{qid}")
+    public Question getQuestionById(@PathVariable Long qid) {
+        return questionService.getQuestionById(qid);
+    }
+
 }

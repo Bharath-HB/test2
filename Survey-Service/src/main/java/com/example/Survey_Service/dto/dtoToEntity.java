@@ -17,12 +17,9 @@ public class dtoToEntity {
                 .requester(response.getRequester())
                 .cname(response.getCname())
                 .cemail(response.getCemail())
-                //.setname(response.getSetname())
                 .createdBy(response.getCreatedby())
                 .status(response.getStatus())
                 .setid(response.getSetid())
-//                .questions(response.getQuestions())
-//                .setList(response.getSetList())
                 .domain(response.getDomain())
                 .build();
 
