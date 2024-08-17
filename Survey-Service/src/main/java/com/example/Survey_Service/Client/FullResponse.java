@@ -12,7 +12,8 @@ import java.util.List;
 @NoArgsConstructor
 public class FullResponse {
     public Long surveyid;
-    public Long setid;
+//    public Long setid;
+    private String setname;
     public String requester;
     public String cname;
     public List<String> cemail;
@@ -20,6 +21,7 @@ public class FullResponse {
     public String createdby;
     public SurveyStatus status;
     private List<Question> questions;
+    private List<Long> questionIds;
 
 
 }

@@ -23,4 +23,5 @@ public class Assessment {
     private Date createdtimestamp;
     private Date updatedtimestamp;
     private List<Question> questions;
+    private List<Long> questionIds;
 }

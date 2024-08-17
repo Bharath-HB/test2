@@ -19,8 +19,10 @@ public class dtoToEntity {
                 .cemail(response.getCemail())
                 .createdBy(response.getCreatedby())
                 .status(response.getStatus())
-                .setid(response.getSetid())
+                .setname(response.getSetname())
+//                .setid(response.getSetid())
                 .domain(response.getDomain())
+                .questionIds(response.getQuestionIds())
                 .build();
 
     }
