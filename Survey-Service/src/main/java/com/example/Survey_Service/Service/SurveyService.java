@@ -121,7 +121,8 @@ public class SurveyService {
                 assert assessment != null;
                 Long setid =assessment.getSetid();
                 for(Long qid : survey.getQuestionIds()) {
-                    questions.add(questionClient.getQuestionsBySetidAndQid(setid,qid));
+//                    questions.add(questionClient.getQuestionsBySetidAndQid(setid,qid));
+                    questions.add(questionClient.getQuestionById(qid));
 
                 }
 
