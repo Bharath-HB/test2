@@ -21,4 +21,10 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.ok(setAlreadyExists);
     }
+
+    @ExceptionHandler(AssessmentNotFoundException.class)
+    public ResponseEntity<String> handleAssessmentNotFoundException(
+            AssessmentNotFoundException exception) {
+        return ResponseEntity.ok(exception.getMessage()); // 200 with a custom message
+    }
 }

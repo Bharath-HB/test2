@@ -3,6 +3,7 @@ package com.example.QuestionService.Service;
 import com.example.QuestionService.Dto.AssessmentDto;
 import com.example.QuestionService.Dto.EntityToDto;
 import com.example.QuestionService.Dto.QuestionDto;
+import com.example.QuestionService.Exception.AssessmentNotFoundException;
 import com.example.QuestionService.Exception.QuestionidNotFoundException;
 import com.example.QuestionService.Exception.SetidNotFoundException;
 import com.example.QuestionService.Model.Assessment;
@@ -97,7 +98,11 @@ public class AssessmentService {
 
 
     public Assessment findAssessmentBySetname(String setname) {
-        return assessmentRepo.findBySetname(setname);
+        Optional<Assessment> assessment = assessmentRepo.findBySetname(setname);
+        if (assessment.isEmpty()) {
+            throw new AssessmentNotFoundException("Assessment not found");
+        }
+        return assessment.get();
     }
 }
 
