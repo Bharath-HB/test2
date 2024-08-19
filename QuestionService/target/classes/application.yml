@@ -1,12 +1,5 @@
-#spring:
-#  application:
-#    name: QuestionService
-#
-#  config:
-#    import: optional:configserver:http://localhost:8888
-
 server:
-  port: 8082
+  port: 9098
 spring:
   application:
     name: QuestionService

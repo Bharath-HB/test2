@@ -11,4 +11,5 @@ public class Question {
     private String qid;
     private String qdetails;
     private Long setid;
+//    private String setname;
 }

@@ -1,9 +1,10 @@
-package com.example.QuestionService.service;
+package com.example.QuestionService.Service;
 
-import com.example.QuestionService.model.Question;
-import com.example.QuestionService.repo.QuestionRepo;
+import com.example.QuestionService.Exception.QuestionidNotFoundException;
+import com.example.QuestionService.Exception.SetidNotFoundException;
+import com.example.QuestionService.Model.Question;
+import com.example.QuestionService.Repo.QuestionRepo;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -17,11 +18,18 @@ public class QuestionService {
     }
 
     public List<Question> getAllQuestions(Long setid) {
-        return questionRepo.findBySetid(setid);
+
+        List<Question> questions = questionRepo.findBySetid(setid);
+        if(questions.isEmpty()) {
+            throw new SetidNotFoundException("Setid not found");
+        }
+        else {
+            return questions;
+        }
     }
 
 
     public Question getQuestionById(Long qid) {
-        return questionRepo.findById(qid).orElse(null);
+        return questionRepo.findById(qid).orElseThrow(() -> new QuestionidNotFoundException("Question not found"));
     }
 }

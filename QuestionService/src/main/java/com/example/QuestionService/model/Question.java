@@ -1,4 +1,4 @@
-package com.example.QuestionService.model;
+package com.example.QuestionService.Model;
 
 
 import jakarta.persistence.*;
@@ -22,6 +22,8 @@ public class Question {
     private Long qid;
     private String qdetails;
     private Long setid;
+    private String setname;
+
 
     @OneToMany
     @JoinColumn(name="questionid")

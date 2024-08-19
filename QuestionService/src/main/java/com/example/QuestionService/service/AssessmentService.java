@@ -1,13 +1,15 @@
-package com.example.QuestionService.service;
+package com.example.QuestionService.Service;
 
-import com.example.QuestionService.dto.AssessmentDto;
-import com.example.QuestionService.dto.EntityToDto;
-import com.example.QuestionService.dto.QuestionDto;
-import com.example.QuestionService.model.Assessment;
-import com.example.QuestionService.model.Question;
-import com.example.QuestionService.model.Status;
-import com.example.QuestionService.repo.AssessmentRepo;
-import com.example.QuestionService.repo.QuestionRepo;
+import com.example.QuestionService.Dto.AssessmentDto;
+import com.example.QuestionService.Dto.EntityToDto;
+import com.example.QuestionService.Dto.QuestionDto;
+import com.example.QuestionService.Exception.QuestionidNotFoundException;
+import com.example.QuestionService.Exception.SetidNotFoundException;
+import com.example.QuestionService.Model.Assessment;
+import com.example.QuestionService.Model.Question;
+import com.example.QuestionService.Model.Status;
+import com.example.QuestionService.Repo.AssessmentRepo;
+import com.example.QuestionService.Repo.QuestionRepo;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +17,6 @@ import java.util.List;
 import java.util.Optional;
 
 
-import static com.example.QuestionService.dto.EntityToDto.convertToEntity;
 
 @Service
 public class AssessmentService {
@@ -26,7 +27,7 @@ public class AssessmentService {
 
     private final AssessmentRepo assessmentRepo;
 
-    // private final Assessment assessment;
+
 
     public AssessmentService(QuestionRepo questionRepo, AssessmentRepo assessmentRepo) {
         this.questionRepo = questionRepo;
@@ -37,9 +38,9 @@ public class AssessmentService {
 
     public Assessment createAssessment(AssessmentDto assessment) {
         try {
-            //  convertToEntity(assessment);
+
             Assessment assessment1 = EntityToDto.convertToEntity(assessment);
-            //assessment1.setQuestions(null);
+
             assessment1.setStatus(Status.IN_PROGRESS);
             return assessmentRepo.save(assessment1);
         }
@@ -61,49 +62,43 @@ public class AssessmentService {
 
     public Question updateAssessmentbyqid(Long setid, Long qid, QuestionDto question) {
 
+
         Optional<Assessment> setInfo= assessmentRepo.findById(setid);
         Optional<Question> updQuestion=questionRepo.findById(qid);
         Question question1 = EntityToDto.convertToEntity(question);
         if(updQuestion.isPresent()&& setInfo.isPresent()){
 
-            updQuestion.get().setSetid(question1.getSetid());
-            updQuestion.get().setQid(question1.getQid());
-            updQuestion.get().setQdetails(question1.getQdetails());
+
             updQuestion.get().setAnswers(question1.getAnswers());
             Question test = updQuestion.get();
             return questionRepo.save(test);
 
         }
         else{
-            throw new RuntimeException("Question not found with questionid: " + qid + " and setname: " + setid);
+           throw new QuestionidNotFoundException("Question to be updated not found");
         }
     }
 
-    public void deleteAssessmentByQidAndSetId(Long setid, Long qid) {
+    public String deleteAssessmentByQidAndSetId(Long setid, Long qid) {
 
         if (setid == null) {
-            throw new IllegalArgumentException("Set name cannot be null or empty");
+            throw new SetidNotFoundException("Set name cannot be null or empty");
         }
         if (qid == null) {
-            throw new IllegalArgumentException("Question ID cannot be null or empty");
+            throw new QuestionidNotFoundException("Question ID cannot be null or empty");
         }
 
 
         Question question = (Question) questionRepo.findByQidAndSetid(qid, setid)
-                .orElseThrow(() -> new EntityNotFoundException("Question not found with questionid: " + qid + " and setname: " + setid));
+                .orElseThrow(() -> new QuestionidNotFoundException("Question not found with questionid: " + qid ));
         questionRepo.delete(question);
+        return ("Question deleted successfully");
     }
 
-    public Assessment findAssessmentBySetId(Long setid) {
-        return assessmentRepo.findById(setid).orElse(null);
-    }
 
-//    private Question saveQuestion(Question question) {
-//        return questionRepo.save(question);
-//    }
-//
-//    private Question findQuestionByQidAndSetId(String qid, String setid) {
-//        return questionRepo.findByQidAndSetid(qid, setid)
-//                .orElse(null);
-//    }
+    public Assessment findAssessmentBySetname(String setname) {
+        return assessmentRepo.findBySetname(setname);
+    }
 }
+
+

@@ -1,4 +1,4 @@
-package com.example.QuestionService.model;
+package com.example.QuestionService.Model;
 
 public enum Status {
     COMPLETED,

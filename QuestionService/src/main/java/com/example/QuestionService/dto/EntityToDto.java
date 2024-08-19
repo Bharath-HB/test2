@@ -1,8 +1,8 @@
-package com.example.QuestionService.dto;
+package com.example.QuestionService.Dto;
 
-import com.example.QuestionService.model.Question;
-import com.example.QuestionService.model.Answers;
-import com.example.QuestionService.model.Assessment;
+import com.example.QuestionService.Model.Question;
+import com.example.QuestionService.Model.Answers;
+import com.example.QuestionService.Model.Assessment;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -1,4 +1,4 @@
-package com.example.QuestionService.dto;
+package com.example.QuestionService.Dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

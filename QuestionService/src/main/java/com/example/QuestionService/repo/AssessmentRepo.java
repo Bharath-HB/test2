@@ -1,10 +1,9 @@
-package com.example.QuestionService.repo;
+package com.example.QuestionService.Repo;
 
-import com.example.QuestionService.model.Assessment;
+import com.example.QuestionService.Model.Assessment;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
 public interface AssessmentRepo extends JpaRepository<Assessment,Long> {
+    Assessment findBySetname(String setname);
 
 }

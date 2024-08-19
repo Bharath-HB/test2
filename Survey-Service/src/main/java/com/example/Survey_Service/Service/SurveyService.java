@@ -28,20 +28,18 @@ public class SurveyService {
 
     private final SurveyRepository repo;
 
-    private dtoToEntity dto;
 
     private final QuestionClient questionClient;
 
-    public SurveyService(SurveyRepository repo,QuestionClient questionClient,dtoToEntity dto) {
+    public SurveyService(SurveyRepository repo,QuestionClient questionClient) {
         this.repo = repo;
         this.questionClient = questionClient;
-        this.dto = dto;
     }
 
     public Survey addSurvey(Survey survey) {
         try {
             survey.setStatus(SurveyStatus.SURVEY_REQUESTED);
-            ResponseEntity<Assessment> assessmentResponse = questionClient.findAssessmentBySetName(survey.getSetname());
+            ResponseEntity<Assessment> assessmentResponse = questionClient.findAssessmentBySetname(survey.getSetname());
             if (assessmentResponse.getStatusCode() == HttpStatus.OK && assessmentResponse.getBody() != null) {
                 return repo.save(survey);
             } else {
@@ -77,17 +75,18 @@ public class SurveyService {
             // Fetch assessment
             Assessment assessment;
             try {
-                assessment = questionClient.findAssessmentBySetName(survey.getSetname()).getBody();
+                assessment = questionClient.findAssessmentBySetname(survey.getSetname()).getBody();
             } catch (ExternalServiceException e) {
-                throw new ExternalServiceException("Failed to retrieve assessment for setid: " + survey.getSetid(), e);
+                throw new ExternalServiceException("Failed to retrieve assessment for setname: " + survey.getSetname(), e);
             }
 
             // Fetch questions
             List<Question> questions;
             try {
-                questions = questionClient.getQuestions(survey.getSetname()).getBody();
+                Long setid =assessment.getSetid();
+                questions = questionClient.getQuestions(setid).getBody();
             } catch (ExternalServiceException e) {
-                throw new ExternalServiceException("Failed to retrieve questions for setid: " + survey.getSetid(), e);
+                throw new ExternalServiceException("Failed to retrieve questions for setname: " + survey.getSetname(), e);
             }
 
             List<Long> questionsIds = new ArrayList<>();
@@ -96,7 +95,7 @@ public class SurveyService {
             response.setCname(survey.getCname());
             response.setCemail(survey.getCemail());
             response.setStatus(SurveyStatus.SURVEY_COMPLETED);
-            response.setSetid(survey.getSetid());
+//            response.setSetid(survey.getSetid());
             response.setDomain(survey.getDomain());
             response.setQuestions(questions);
 
@@ -106,6 +105,7 @@ public class SurveyService {
             }
             response.setQuestionIds(questionsIds);
             response.setCreatedby(assessment.getCreatedby());
+            response.setSetname(survey.getSetname());
 
             // Convert and save the updated survey
             Survey surveyToSave = dtoToEntity.convertToEntity(response);
@@ -142,16 +142,17 @@ public class SurveyService {
             // Fetch assessment and questions
             Assessment assessment;
             try {
-                assessment = questionClient.findAssessmentBySetId(survey.getSetname()).getBody();
+                assessment = questionClient.findAssessmentBySetname(survey.getSetname()).getBody();
             } catch (ExternalServiceException e) {
-                throw new ExternalServiceException("Failed to retrieve assessment for setid: " + survey.getSetid(), e);
+                throw new ExternalServiceException("Failed to retrieve assessment for setname: " + survey.getSetname(), e);
             }
 
             List<Question> questions;
             try {
-                questions = questionClient.getQuestions(survey.getSetname()).getBody();
+                Long setid =assessment.getSetid();
+                questions = questionClient.getQuestions(setid).getBody();
             } catch (ExternalServiceException e) {
-                throw new ExternalServiceException("Failed to retrieve questions for setid: " + survey.getSetid(), e);
+                throw new ExternalServiceException("Failed to retrieve questions for setname: " + survey.getSetname(), e);
             }
 
             List<Long> questionsIds = new ArrayList<>();
@@ -160,7 +161,8 @@ public class SurveyService {
             response.setCname(survey.getCname());
             response.setCemail(survey.getCemail());
             response.setStatus(SurveyStatus.SURVEY_COMPLETED);
-            response.setSetid(survey.getSetid());
+//            response.setSetid(survey.getSetid());
+            response.setSetname(survey.getSetname());
             response.setDomain(survey.getDomain());
             response.setCreatedby(assessment.getCreatedby());
 
@@ -173,7 +175,8 @@ public class SurveyService {
                     throw new ExternalServiceException("Failed to retrieve question with id: " + qid, e);
                 }
 
-                newQuestion.setSetid(survey.getSetname());
+//                newQuestion.setSetid(survey.getSetname());
+//                newQuestion.setSetname(survey.getSetname());
                 boolean isDuplicate = mergedQuestions.stream()
                         .anyMatch(existingQuestion -> existingQuestion.getQid().equals(newQuestion.getQid()));
                 if (!isDuplicate) {

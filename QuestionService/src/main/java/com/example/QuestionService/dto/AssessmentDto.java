@@ -1,6 +1,6 @@
-package com.example.QuestionService.dto;
+package com.example.QuestionService.Dto;
 
-import com.example.QuestionService.model.Status;
+import com.example.QuestionService.Model.Status;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;

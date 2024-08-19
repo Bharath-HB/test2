@@ -1,7 +1,6 @@
-package com.example.QuestionService.repo;
+package com.example.QuestionService.Repo;
 
-import com.example.QuestionService.model.Assessment;
-import com.example.QuestionService.model.Question;
+import com.example.QuestionService.Model.Question;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -11,8 +10,9 @@ public interface QuestionRepo extends JpaRepository<Question,Long> {
 
     Optional<Object> findByQidAndSetid(Long questionid, Long setid);
 
-    List<Question> findBySetid(Long setid);
+//       List<Question> findBySetname(String setname);
 
+    List<Question> findBySetid(Long setid);
 
     //void deleteByQidAndSetname(String qid, String setname);
 }
