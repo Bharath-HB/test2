@@ -14,5 +14,9 @@ public interface QuestionRepo extends JpaRepository<Question,Long> {
 
     List<Question> findBySetid(Long setid);
 
+    Question findBySetidAndQid(Long setid, Long qid);
+
+
+
     //void deleteByQidAndSetname(String qid, String setname);
 }

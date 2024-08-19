@@ -64,6 +64,12 @@ public class AssessmentController {
             return ResponseEntity.status(HttpStatus.OK).body(questions);
     }
 
+    @GetMapping("/{setid}/{qid}")
+    public Question getQuestionsBySetidAndQid(@PathVariable Long setid,@PathVariable Long qid) {
+        Question questions = questionService.getQuestionsBySetidAndQid(setid,qid);
+        return questions;
+    }
+
 
     /**
      * Updates a specific question within an assessment.
@@ -111,4 +117,5 @@ public class AssessmentController {
     public ResponseEntity<Assessment> findAssessmentBySetname(@RequestParam String setname){
         return ResponseEntity.status(HttpStatus.OK).body(assessmentService.findAssessmentBySetname(setname));
     }
+
 }

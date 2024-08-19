@@ -32,4 +32,8 @@ public class QuestionService {
     public Question getQuestionById(Long qid) {
         return questionRepo.findById(qid).orElseThrow(() -> new QuestionidNotFoundException("Question not found"));
     }
+
+    public Question getQuestionsBySetidAndQid(Long setid, Long qid) {
+        return questionRepo.findBySetidAndQid(setid, qid);
+    }
 }

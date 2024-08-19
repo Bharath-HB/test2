@@ -22,7 +22,6 @@ public class Question {
     private Long qid;
     private String qdetails;
     private Long setid;
-    private String setname;
 
 
     @OneToMany
