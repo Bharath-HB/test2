@@ -21,5 +21,8 @@ public interface QuestionClient {
     @GetMapping("/question/{qid}")
     public Question getQuestionById(@PathVariable Long qid);
 
+    @GetMapping("/{setid}/{qid}")
+    public Question getQuestionsBySetidAndQid(@PathVariable Long setid,@PathVariable Long qid) ;
+
 }
 

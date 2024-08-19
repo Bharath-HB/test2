@@ -40,17 +40,51 @@ public class SurveyService {
         try {
             survey.setStatus(SurveyStatus.SURVEY_REQUESTED);
             ResponseEntity<Assessment> assessmentResponse = questionClient.findAssessmentBySetname(survey.getSetname());
+            List<Long> questionsIds = survey.getQuestionIds(); // Ensure this is a List<Long>
+
             if (assessmentResponse.getStatusCode() == HttpStatus.OK && assessmentResponse.getBody() != null) {
+                Long setid = assessmentResponse.getBody().getSetid();
+
+                if (questionsIds == null) {
+                    try {
+                        // Fetch all questions and convert their IDs to List<Long>
+                        List<Question> questions = questionClient.getQuestions(setid).getBody();
+                        questionsIds = questions.stream()
+                                .map(question -> Long.parseLong(question.getQid())) // Ensure Qid is parsed to Long if needed
+                                .collect(Collectors.toList());
+                    } catch (ExternalServiceException e) {
+                        throw new ExternalServiceException("Failed to retrieve questions for setname: " + survey.getSetname(), e);
+                    }
+                    survey.setQuestionIds(questionsIds);
+                } else {
+                    try{
+                        List<Long> questionIds = new ArrayList<Long>();
+                        for(Long qids : questionsIds) {
+                            if (questionClient.getQuestionsBySetidAndQid(setid, qids)==null) {
+                                throw new DatabaseException("Question not found for id: " + qids);
+                            }
+                            questionIds.add(qids);
+                        }
+                        survey.setQuestionIds(questionIds);
+                    }catch (Exception e) {
+                        throw new ResourceNotFoundException("No question exist for the given set name : ");
+                    }
+
+                }
+
                 return repo.save(survey);
+
             } else {
                 throw new ResourceNotFoundException("Assessment not found for setname: " + survey.getSetname());
             }
         } catch (ResourceNotFoundException e) {
-            throw e; // Re-throwing the custom exception for higher-level handling
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Failed to add survey", e);
         }
     }
+
+
 
     public List<Survey> getSurveyDetails() {
         try{
@@ -81,10 +115,16 @@ public class SurveyService {
             }
 
             // Fetch questions
-            List<Question> questions;
+            List<Question> questions = new ArrayList<>();
+
             try {
+                assert assessment != null;
                 Long setid =assessment.getSetid();
-                questions = questionClient.getQuestions(setid).getBody();
+                for(Long qid : survey.getQuestionIds()) {
+                    questions.add(questionClient.getQuestionsBySetidAndQid(setid,qid));
+
+                }
+
             } catch (ExternalServiceException e) {
                 throw new ExternalServiceException("Failed to retrieve questions for setname: " + survey.getSetname(), e);
             }
@@ -97,13 +137,20 @@ public class SurveyService {
             response.setStatus(SurveyStatus.SURVEY_COMPLETED);
 //            response.setSetid(survey.getSetid());
             response.setDomain(survey.getDomain());
+            if(survey.getQuestionIds().isEmpty()) {
+                for (Question question : questions) {
+                    questionsIds.add(Long.valueOf(question.getQid()));
+                }
+                response.setQuestionIds(questionsIds);
+            }else{
+                response.setQuestionIds(survey.getQuestionIds());
+            }
+
+
             response.setQuestions(questions);
 
             // Collect question IDs
-            for (Question question : questions) {
-                questionsIds.add(Long.valueOf(question.getQid()));
-            }
-            response.setQuestionIds(questionsIds);
+
             response.setCreatedby(assessment.getCreatedby());
             response.setSetname(survey.getSetname());
 
@@ -147,10 +194,12 @@ public class SurveyService {
                 throw new ExternalServiceException("Failed to retrieve assessment for setname: " + survey.getSetname(), e);
             }
 
-            List<Question> questions;
+            List<Question> questionList = new ArrayList<>();
             try {
-                Long setid =assessment.getSetid();
-                questions = questionClient.getQuestions(setid).getBody();
+                for(Long qid : survey.getQuestionIds()) {
+                    Question questions = questionClient.getQuestionById(qid);
+                    questionList.add(questions);
+                }
             } catch (ExternalServiceException e) {
                 throw new ExternalServiceException("Failed to retrieve questions for setname: " + survey.getSetname(), e);
             }
@@ -166,7 +215,7 @@ public class SurveyService {
             response.setDomain(survey.getDomain());
             response.setCreatedby(assessment.getCreatedby());
 
-            List<Question> mergedQuestions = new ArrayList<>(questions);
+            List<Question> mergedQuestions = new ArrayList<>(questionList);
             for (Long qid : qids) {
                 Question newQuestion;
                 try {
