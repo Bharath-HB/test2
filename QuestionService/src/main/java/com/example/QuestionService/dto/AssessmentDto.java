@@ -1,5 +1,6 @@
 package com.example.QuestionService.Dto;
 
+import com.example.QuestionService.Model.Question;
 import com.example.QuestionService.Model.Status;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -42,5 +43,5 @@ public class AssessmentDto {
     private Date createdtimestamp;
     private Date updatedtimestamp;
 
-    private List<QuestionDto> questions;
+    private List<Question> questions;
 }

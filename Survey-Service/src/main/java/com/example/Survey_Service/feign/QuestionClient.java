@@ -12,17 +12,15 @@ import java.util.List;
 @FeignClient(name = "questionService", url = "http://localhost:9098/assessments", configuration = FeignConfiguration.class)
 
 public interface QuestionClient {
-    @GetMapping("/findAssessmentBySetname/{setname}")
-    public ResponseEntity<Assessment> findAssessmentBySetname(@RequestParam String setname);
-
-    @GetMapping("/{setid}")
-    public ResponseEntity<List<Question>> getQuestions(@PathVariable Long setid);
 
     @GetMapping("/question/{qid}")
     public Question getQuestionById(@PathVariable Long qid);
 
-    @GetMapping("/{setid}/{qid}")
-    public Question getQuestionsBySetidAndQid(@PathVariable Long setid,@PathVariable Long qid) ;
+    @GetMapping("/{setname}")
+    public ResponseEntity<Assessment> getAssessmentBySetname(@PathVariable String setname,@RequestParam(value = "qid", required = false) Long qid);
+
+    @GetMapping("/test")
+    public ResponseEntity<?> getAssessment(@RequestParam(required = false) String setname,@RequestParam(required = false) Long qid);
 
 }
 

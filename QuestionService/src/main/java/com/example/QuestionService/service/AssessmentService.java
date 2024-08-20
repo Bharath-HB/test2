@@ -11,10 +11,12 @@ import com.example.QuestionService.Model.Question;
 import com.example.QuestionService.Model.Status;
 import com.example.QuestionService.Repo.AssessmentRepo;
 import com.example.QuestionService.Repo.QuestionRepo;
-import jakarta.persistence.EntityNotFoundException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -25,14 +27,14 @@ public class AssessmentService {
 
     private final QuestionRepo questionRepo;
 
-
     private final AssessmentRepo assessmentRepo;
 
+    private final ObjectMapper objectMapper;
 
-
-    public AssessmentService(QuestionRepo questionRepo, AssessmentRepo assessmentRepo) {
+    public AssessmentService(QuestionRepo questionRepo, AssessmentRepo assessmentRepo,ObjectMapper objectMapper) {
         this.questionRepo = questionRepo;
         this.assessmentRepo = assessmentRepo;
+        this.objectMapper = objectMapper;
 
     }
 
@@ -97,12 +99,79 @@ public class AssessmentService {
     }
 
 
-    public Assessment findAssessmentBySetname(String setname) {
+//    public Assessment findAssessmentBySetname(String setname) {
+//        Optional<Assessment> assessment = assessmentRepo.findBySetname(setname);
+//        if (assessment.isEmpty()) {
+//            throw new AssessmentNotFoundException("Assessment not found");
+//        }
+//        return assessment.get();
+//    }
+
+    public AssessmentDto getAssessmentBySetname(String setname, Long qid) {
         Optional<Assessment> assessment = assessmentRepo.findBySetname(setname);
         if (assessment.isEmpty()) {
             throw new AssessmentNotFoundException("Assessment not found");
         }
-        return assessment.get();
+        AssessmentDto assessmentDto = new AssessmentDto();
+        assessmentDto.setSetname(assessment.get().getSetname());
+        assessmentDto.setSetid(assessment.get().getSetid());
+        assessmentDto.setStatus(assessment.get().getStatus());
+        assessmentDto.setCreatedby(assessment.get().getCreatedby());
+        assessmentDto.setUpdatedby(assessment.get().getUpdatedby());
+        assessmentDto.setDomain(assessment.get().getDomain());
+        assessmentDto.setStatus(assessment.get().getStatus());
+        if(qid != null){
+            Optional<Question> question = questionRepo.findByQidAndSetid(qid,assessment.get().getSetid());
+            question.ifPresent(value -> assessmentDto.setQuestions(Collections.singletonList(question.get())));
+        }
+        else {
+            List<Question> questions=questionRepo.findBySetid(assessment.get().getSetid());
+
+            assessmentDto.setQuestions(questions);
+        }
+
+        return assessmentDto;
+    }
+
+    public Object getAssessment(String setname, Long qid) {
+        if (setname == null) {
+            return assessmentRepo.findAll();
+        } else {
+            Optional<Assessment> assessmentOptional = assessmentRepo.findBySetname(setname);
+            if (assessmentOptional.isEmpty()) {
+                throw new AssessmentNotFoundException("Assessment not found for setname: " + setname);
+            }
+
+            Assessment assessment = assessmentOptional.get();
+            AssessmentDto assessmentDto = new AssessmentDto();
+            assessmentDto.setSetname(assessment.getSetname());
+            assessmentDto.setSetid(assessment.getSetid());
+            assessmentDto.setStatus(assessment.getStatus());
+            assessmentDto.setCreatedby(assessment.getCreatedby());
+            assessmentDto.setUpdatedby(assessment.getUpdatedby());
+            assessmentDto.setDomain(assessment.getDomain());
+            assessmentDto.setStatus(assessment.getStatus());
+
+            if (qid != null) {
+                Optional<Question> questionOptional = questionRepo.findByQidAndSetid(qid, assessment.getSetid());
+                questionOptional.ifPresent(question -> assessmentDto.setQuestions(Collections.singletonList(question)));
+            } else {
+                List<Question> questions = questionRepo.findBySetid(assessment.getSetid());
+                assessmentDto.setQuestions(questions);
+            }
+
+            // Example of manual deserialization (if needed)
+            try {
+                // Assuming you need to convert some response body or similar to Assessment
+                Map map = objectMapper.convertValue(assessment, Map.class);
+                Assessment deserializedAssessment = objectMapper.convertValue(map, Assessment.class);
+                // Process deserializedAssessment if needed
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to deserialize assessment", e);
+            }
+
+            return assessmentDto;
+        }
     }
 }
 

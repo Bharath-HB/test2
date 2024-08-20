@@ -7,6 +7,7 @@ import com.example.QuestionService.Model.Question;
 import com.example.QuestionService.Service.AssessmentService;
 import com.example.QuestionService.Service.QuestionService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.websocket.server.PathParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -58,17 +59,17 @@ public class AssessmentController {
      * @param setid The ID of the assessment set for which to retrieve questions, provided as a path variable.
      * @return A ResponseEntity containing a list of Questions for the specified assessment set and HTTP status 200 OK.
      */
-    @GetMapping("/{setid}")
-    public ResponseEntity<Object> getQuestions(@PathVariable Long setid) {
-            List<Question> questions = questionService.getAllQuestions(setid);
-            return ResponseEntity.status(HttpStatus.OK).body(questions);
-    }
+//    @GetMapping("/{setid}")
+//    public ResponseEntity<Object> getQuestions(@PathVariable Long setid) {
+//            List<Question> questions = questionService.getAllQuestions(setid);
+//            return ResponseEntity.status(HttpStatus.OK).body(questions);
+//    }
 
-    @GetMapping("/{setid}/{qid}")
-    public Question getQuestionsBySetidAndQid(@PathVariable Long setid,@PathVariable Long qid) {
-        Question questions = questionService.getQuestionsBySetidAndQid(setid,qid);
-        return questions;
-    }
+//    @GetMapping("/{setid}/{qid}")
+//    public Question getQuestionsBySetidAndQid(@PathVariable Long setid,@PathVariable Long qid) {
+//        Question questions = questionService.getQuestionsBySetidAndQid(setid,qid);
+//        return questions;
+//    }
 
 
     /**
@@ -113,9 +114,19 @@ public class AssessmentController {
 
     }
 
-    @GetMapping("/findAssessmentBySetname/{setname}")
-    public ResponseEntity<Assessment> findAssessmentBySetname(@RequestParam String setname){
-        return ResponseEntity.status(HttpStatus.OK).body(assessmentService.findAssessmentBySetname(setname));
+//    @GetMapping("/findAssessmentBySetname/{setname}")
+//    public ResponseEntity<Assessment> findAssessmentBySetname(@RequestParam String setname){
+//        return ResponseEntity.status(HttpStatus.OK).body(assessmentService.findAssessmentBySetname(setname));
+//    }
+
+    @GetMapping("/{setname}")
+    public ResponseEntity<AssessmentDto> getAssessmentBySetname(@PathVariable String setname,@RequestParam(required = false) Long qid){
+        return ResponseEntity.status(HttpStatus.OK).body(assessmentService.getAssessmentBySetname(setname, qid));
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<?> getAssessment(@RequestParam(required = false) String setname,@RequestParam(required = false) Long qid){
+        return ResponseEntity.status(HttpStatus.OK).body(assessmentService.getAssessment(setname, qid));
     }
 
 }

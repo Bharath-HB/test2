@@ -79,9 +79,9 @@ public class EntityToDto {
                 .updatedby(assessment.getUpdatedby())
                 .createdtimestamp(assessment.getCreatedtimestamp())
                 .updatedtimestamp(assessment.getUpdatedtimestamp())
-                .questions(assessment.getQuestions() != null ? assessment.getQuestions().stream()
-                        .map(EntityToDto::convertToDto)
-                        .collect(Collectors.toList()) : null)
+////                .questions(assessment.getQuestions() != null ? assessment.getQuestions().stream()
+//                        .map(EntityToDto::convertToDto)
+//                        .collect(Collectors.toList()) : null)
                 .build();
     }
 
@@ -90,9 +90,10 @@ public class EntityToDto {
             return null;
         }
 
-        List<Question> questionsList = assessmentDTO.getQuestions() != null ? assessmentDTO.getQuestions().stream()
-                .map(EntityToDto::convertToEntity)
-                .collect(Collectors.toList()) : null;
+        List<Question> questionsList = assessmentDTO.getQuestions();
+//        List<Question> questionsList = assessmentDTO.getQuestions() != null ? assessmentDTO.getQuestions().stream()
+//                .map(EntityToDto::convertToEntity)
+//                .collect(Collectors.toList()) : null;
 
         return Assessment.builder()
                 .setid(assessmentDTO.getSetid())
