@@ -12,7 +12,7 @@ import java.util.List;
 @FeignClient(name = "questionService", url = "http://localhost:9098/assessments", configuration = FeignConfiguration.class)
 
 public interface QuestionClient {
-    @GetMapping("/findAssessmentBySetId/{setname}")
+    @GetMapping("/findAssessmentBySetname/{setname}")
     public ResponseEntity<Assessment> findAssessmentBySetname(@RequestParam String setname);
 
     @GetMapping("/{setid}")

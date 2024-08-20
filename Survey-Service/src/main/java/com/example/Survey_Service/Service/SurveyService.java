@@ -122,7 +122,9 @@ public class SurveyService {
                 Long setid =assessment.getSetid();
                 for(Long qid : survey.getQuestionIds()) {
 //                    questions.add(questionClient.getQuestionsBySetidAndQid(setid,qid));
-                    questions.add(questionClient.getQuestionById(qid));
+                    Question q1= questionClient.getQuestionById(qid);
+                    q1.setSetid(setid);
+                    questions.add(q1);
 
                 }
 
@@ -199,6 +201,7 @@ public class SurveyService {
             try {
                 for(Long qid : survey.getQuestionIds()) {
                     Question questions = questionClient.getQuestionById(qid);
+                    questions.setSetid(assessment.getSetid());
                     questionList.add(questions);
                 }
             } catch (ExternalServiceException e) {
@@ -225,7 +228,7 @@ public class SurveyService {
                     throw new ExternalServiceException("Failed to retrieve question with id: " + qid, e);
                 }
 
-//                newQuestion.setSetid(survey.getSetname());
+                newQuestion.setSetid(assessment.getSetid());
 //                newQuestion.setSetname(survey.getSetname());
                 boolean isDuplicate = mergedQuestions.stream()
                         .anyMatch(existingQuestion -> existingQuestion.getQid().equals(newQuestion.getQid()));

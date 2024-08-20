@@ -113,7 +113,7 @@ public class AssessmentController {
 
     }
 
-    @GetMapping("/findAssessmentBySetId/{setname}")
+    @GetMapping("/findAssessmentBySetname/{setname}")
     public ResponseEntity<Assessment> findAssessmentBySetname(@RequestParam String setname){
         return ResponseEntity.status(HttpStatus.OK).body(assessmentService.findAssessmentBySetname(setname));
     }
