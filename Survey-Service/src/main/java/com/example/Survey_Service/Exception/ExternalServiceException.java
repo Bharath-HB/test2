@@ -7,12 +7,10 @@ public class ExternalServiceException extends RuntimeException {
         super(message);
     }
 
-    // Constructor with a cause
     public ExternalServiceException(Throwable cause) {
         super(cause);
     }
 
-    // Constructor with both message and cause
     public ExternalServiceException(String message, Throwable cause) {
         super(message, cause);
     }

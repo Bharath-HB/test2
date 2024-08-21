@@ -62,20 +62,15 @@ public class AssessmentService {
 
     }
 
-
     public Question updateAssessmentbyqid(Long setid, Long qid, QuestionDto question) {
-
 
         Optional<Assessment> setInfo= assessmentRepo.findById(setid);
         Optional<Question> updQuestion=questionRepo.findById(qid);
         Question question1 = EntityToDto.convertToEntity(question);
         if(updQuestion.isPresent()&& setInfo.isPresent()){
-
-
             updQuestion.get().setAnswers(question1.getAnswers());
             Question test = updQuestion.get();
             return questionRepo.save(test);
-
         }
         else{
            throw new QuestionidNotFoundException("Question to be updated not found");
@@ -83,29 +78,17 @@ public class AssessmentService {
     }
 
     public String deleteAssessmentByQidAndSetId(Long setid, Long qid) {
-
         if (setid == null) {
             throw new SetidNotFoundException("Set name cannot be null or empty");
         }
         if (qid == null) {
             throw new QuestionidNotFoundException("Question ID cannot be null or empty");
         }
-
-
         Question question = (Question) questionRepo.findByQidAndSetid(qid, setid)
                 .orElseThrow(() -> new QuestionidNotFoundException("Question not found with questionid: " + qid ));
         questionRepo.delete(question);
         return ("Question deleted successfully");
     }
-
-
-//    public Assessment findAssessmentBySetname(String setname) {
-//        Optional<Assessment> assessment = assessmentRepo.findBySetname(setname);
-//        if (assessment.isEmpty()) {
-//            throw new AssessmentNotFoundException("Assessment not found");
-//        }
-//        return assessment.get();
-//    }
 
     public AssessmentDto getAssessmentBySetname(String setname, Long qid) {
         Optional<Assessment> assessment = assessmentRepo.findBySetname(setname);
@@ -126,53 +109,11 @@ public class AssessmentService {
         }
         else {
             List<Question> questions=questionRepo.findBySetid(assessment.get().getSetid());
-
             assessmentDto.setQuestions(questions);
         }
-
         return assessmentDto;
     }
 
-    public Object getAssessment(String setname, Long qid) {
-        if (setname == null) {
-            return assessmentRepo.findAll();
-        } else {
-            Optional<Assessment> assessmentOptional = assessmentRepo.findBySetname(setname);
-            if (assessmentOptional.isEmpty()) {
-                throw new AssessmentNotFoundException("Assessment not found for setname: " + setname);
-            }
-
-            Assessment assessment = assessmentOptional.get();
-            AssessmentDto assessmentDto = new AssessmentDto();
-            assessmentDto.setSetname(assessment.getSetname());
-            assessmentDto.setSetid(assessment.getSetid());
-            assessmentDto.setStatus(assessment.getStatus());
-            assessmentDto.setCreatedby(assessment.getCreatedby());
-            assessmentDto.setUpdatedby(assessment.getUpdatedby());
-            assessmentDto.setDomain(assessment.getDomain());
-            assessmentDto.setStatus(assessment.getStatus());
-
-            if (qid != null) {
-                Optional<Question> questionOptional = questionRepo.findByQidAndSetid(qid, assessment.getSetid());
-                questionOptional.ifPresent(question -> assessmentDto.setQuestions(Collections.singletonList(question)));
-            } else {
-                List<Question> questions = questionRepo.findBySetid(assessment.getSetid());
-                assessmentDto.setQuestions(questions);
-            }
-
-            // Example of manual deserialization (if needed)
-            try {
-                // Assuming you need to convert some response body or similar to Assessment
-                Map map = objectMapper.convertValue(assessment, Map.class);
-                Assessment deserializedAssessment = objectMapper.convertValue(map, Assessment.class);
-                // Process deserializedAssessment if needed
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to deserialize assessment", e);
-            }
-
-            return assessmentDto;
-        }
-    }
 }
 
 

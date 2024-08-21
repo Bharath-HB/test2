@@ -20,11 +20,8 @@ public class dtoToEntity {
                 .createdBy(response.getCreatedby())
                 .status(response.getStatus())
                 .setname(response.getSetname())
-//                .setid(response.getSetid())
                 .domain(response.getDomain())
                 .questionIds(response.getQuestionIds())
                 .build();
-
     }
-
 }

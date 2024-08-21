@@ -1,0 +1,41 @@
+    @GetMapping("/test")
+    public ResponseEntity<?> getAssessment(@RequestParam(required = false) String setname,@RequestParam(required = false) Long qid){
+        return ResponseEntity.status(HttpStatus.OK).body(assessmentService.getAssessment(setname, qid));
+    }
+
+public Object getAssessment(String setname, Long qid) {
+        if (setname == null) {
+            return assessmentRepo.findAll();
+        } else {
+            Optional<Assessment> assessmentOptional = assessmentRepo.findBySetname(setname);
+            if (assessmentOptional.isEmpty()) {
+                throw new AssessmentNotFoundException("Assessment not found for setname: " + setname);
+            }
+            Assessment assessment = assessmentOptional.get();
+            AssessmentDto assessmentDto = new AssessmentDto();
+            assessmentDto.setSetname(assessment.getSetname());
+            assessmentDto.setSetid(assessment.getSetid());
+            assessmentDto.setStatus(assessment.getStatus());
+            assessmentDto.setCreatedby(assessment.getCreatedby());
+            assessmentDto.setUpdatedby(assessment.getUpdatedby());
+            assessmentDto.setDomain(assessment.getDomain());
+            assessmentDto.setStatus(assessment.getStatus());
+            if (qid != null) {
+                Optional<Question> questionOptional = questionRepo.findByQidAndSetid(qid, assessment.getSetid());
+                questionOptional.ifPresent(question -> assessmentDto.setQuestions(Collections.singletonList(question)));
+            } else {
+                List<Question> questions = questionRepo.findBySetid(assessment.getSetid());
+                assessmentDto.setQuestions(questions);
+            }
+            try {
+                // Assuming you need to convert some response body or similar to Assessment
+                Map map = objectMapper.convertValue(assessment, Map.class);
+                Assessment deserializedAssessment = objectMapper.convertValue(map, Assessment.class);
+                // Process deserializedAssessment if needed
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to deserialize assessment", e);
+            }
+
+            return assessmentDto;
+        }
+    }

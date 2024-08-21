@@ -25,13 +25,10 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-    // Define an ErrorResponse class for a consistent error response format
-    // Define an ErrorResponse class for consistent error responses
     @Setter
     @Getter
     public static class ErrorResponse {
         private String message;
-
         public ErrorResponse(String message) {
             this.message = message;
         }

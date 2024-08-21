@@ -20,5 +20,4 @@ public class Answers {
     private Long answerid;
     private String answer;
     private String suggestion;
-  //  private String qid;
 }

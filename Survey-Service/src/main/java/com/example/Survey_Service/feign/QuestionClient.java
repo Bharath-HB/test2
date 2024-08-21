@@ -19,8 +19,5 @@ public interface QuestionClient {
     @GetMapping("/{setname}")
     public ResponseEntity<Assessment> getAssessmentBySetname(@PathVariable String setname,@RequestParam(value = "qid", required = false) Long qid);
 
-    @GetMapping("/test")
-    public ResponseEntity<?> getAssessment(@RequestParam(required = false) String setname,@RequestParam(required = false) Long qid);
-
 }
 

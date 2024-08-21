@@ -17,7 +17,6 @@ public class EntityToDto {
                 .answerid(answers.getAnswerid())
                 .answer(answers.getAnswer())
                 .suggestion(answers.getSuggestion())
-                //.qid(answers.getQid())
                 .build();
     }
 
@@ -29,7 +28,6 @@ public class EntityToDto {
                 .answerid(answersDto.getAnswerid())
                 .answer(answersDto.getAnswer())
                 .suggestion(answersDto.getSuggestion())
-                //.qid(AnswersDto.getQid())
                 .build();
     }
 
@@ -44,7 +42,6 @@ public class EntityToDto {
         return QuestionDto.builder()
                 .qid(question.getQid())
                 .qdetails(question.getQdetails())
-                //.setid(question.getSetid())
                 .answers(answersDtoList)
                 .build();
     }
@@ -79,9 +76,6 @@ public class EntityToDto {
                 .updatedby(assessment.getUpdatedby())
                 .createdtimestamp(assessment.getCreatedtimestamp())
                 .updatedtimestamp(assessment.getUpdatedtimestamp())
-////                .questions(assessment.getQuestions() != null ? assessment.getQuestions().stream()
-//                        .map(EntityToDto::convertToDto)
-//                        .collect(Collectors.toList()) : null)
                 .build();
     }
 
@@ -91,9 +85,6 @@ public class EntityToDto {
         }
 
         List<Question> questionsList = assessmentDTO.getQuestions();
-//        List<Question> questionsList = assessmentDTO.getQuestions() != null ? assessmentDTO.getQuestions().stream()
-//                .map(EntityToDto::convertToEntity)
-//                .collect(Collectors.toList()) : null;
 
         return Assessment.builder()
                 .setid(assessmentDTO.getSetid())

@@ -12,7 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 public class FullResponse {
     public Long surveyid;
-//    public Long setid;
     private String setname;
     public String requester;
     public String cname;
