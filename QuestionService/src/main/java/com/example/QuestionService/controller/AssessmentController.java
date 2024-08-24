@@ -96,4 +96,9 @@ public class AssessmentController {
     public ResponseEntity<AssessmentDto> getAssessmentBySetname(@PathVariable String setname,@RequestParam(required = false) Long qid){
         return ResponseEntity.status(HttpStatus.OK).body(assessmentService.getAssessmentBySetname(setname, qid));
     }
+
+    @PutMapping("/{setname}")
+    public ResponseEntity<Question> updateAssessmentBySetname(@PathVariable String setname,@RequestParam(required = false) Long qid,@RequestBody Question question){
+        return ResponseEntity.status(HttpStatus.OK).body(assessmentService.updateAssessmentBySetname(setname, qid,question));
+    }
 }

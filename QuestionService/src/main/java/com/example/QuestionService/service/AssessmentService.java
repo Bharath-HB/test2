@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 
@@ -114,6 +113,25 @@ public class AssessmentService {
         return assessmentDto;
     }
 
+    public Question updateAssessmentBySetname(String setname, Long qid, Question question) {
+        Optional<Assessment> assessment = assessmentRepo.findBySetname(setname);
+        if (assessment.isEmpty()) {
+            throw new AssessmentNotFoundException("Assessment not found");
+        }
+        if(qid == null) {
+            return questionRepo.save(question);
+        }
+        else {
+            Optional<Question> question1 = questionRepo.findById(qid);
+
+            if(question1.isPresent()) {
+                question1.get().setQdetails(question.getQdetails());
+                question1.get().setAnswers(question.getAnswers());
+                return questionRepo.save(question1.get());
+            }
+            return questionRepo.save(question1.get());
+        }
+    }
 }
 
 
